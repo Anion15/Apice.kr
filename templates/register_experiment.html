@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>실험계획서 작성 - Apice동아리</title>
+    <link rel='icon' type="image/png" href="https://raw.githubusercontent.com/Anion15/anion15.github.io/refs/heads/main/icon-.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif !important;letter-spacing: -0.02em;overflow-x: hidden;background-color: #171717 translate="no"}
+        html, body {overflow-x: hidden;position: relative;width: 100%;   -ms-overflow-style: none; scrollbar-width: none;}
+        html ::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-neutral-900 text-gray-100">
+    <div class="min-h-screen py-12 px-4">
+        <div class="max-w-2xl mx-auto">
+            <div class="mb-8">
+                <a href="/" class="text-gray-400 hover:text-gray-300 mb-4 inline-block">← 돌아가기</a>
+                <h1 class="text-3xl font-bold text-gray-100">실험계획서 작성</h1>
+                <p class="text-gray-400 mt-2">1, 2학년 여러분의 실험 계획을 공유해주세요</p>
+            </div>
+            <div class="bg-neutral-800 rounded-lg p-8 border border-neutral-700">
+                <form id="experimentForm">
+                    <div class="mb-6">
+                        <label class="block text-gray-300 font-medium mb-2">실험제목</label>
+                        <input 
+                            type="text" 
+                            name="title" 
+                            id="title"
+                            placeholder="예: DNA 추출 실험"
+                            class="w-full px-4 py-2 bg-neutral-700 border border-neutral-600 rounded text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                            required
+                        />
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-gray-300 font-medium mb-2">실험 설명</label>
+                        <textarea 
+                            name="description" 
+                            id="description"
+                            placeholder="실험의 목표, 방법, 준비물 등을 상세히 설명해주세요"
+                            rows="8"
+                            class="w-full px-4 py-2 bg-neutral-700 border border-neutral-600 rounded text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-500 resize-none"
+                            required
+                        ></textarea>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-gray-300 font-medium mb-2">모집 인원수</label>
+                        <input 
+                            type="number" 
+                            name="max_participants" 
+                            id="max_participants"
+                            placeholder="1~8"
+                            min="1"
+                            max="100"
+                            class="w-full px-4 py-2 bg-neutral-700 border border-neutral-600 rounded text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                            required
+                        />
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-gray-300 font-medium mb-2">과학 주제</label>
+                        <select 
+                            id="subject"
+                            class="w-full px-4 py-2 bg-neutral-700 border border-neutral-600 rounded text-gray-100 focus:outline-none focus:border-blue-500"
+                        >
+                            <option value="">선택하세요</option>
+                            <option value="물리">물리</option>
+                            <option value="화학">화학</option>
+                            <option value="생물">생물</option>
+                            <option value="지구">지구</option>
+                        </select>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-gray-300 font-medium mb-2">모집 마감 일시</label>
+                        <input 
+                            type="datetime-local" 
+                            id="deadline"
+                            class="w-full px-4 py-2 bg-neutral-700 border border-neutral-600 rounded text-gray-100 focus:outline-none focus:border-blue-500"
+                        />
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-gray-300 font-medium mb-2">실험 총 횟수</label>
+                        <input 
+                            type="number" 
+                            id="total_sessions"
+                            placeholder="1"
+                            min="1"
+                            max="10"
+                            value="1"
+                            class="w-full px-4 py-2 bg-neutral-700 border border-neutral-600 rounded text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                        />
+                    </div>
+                    <div id="sessionsContainer" class="mb-6">
+                        <label class="block text-gray-300 font-medium mb-4">실험 회차별 일정 (모집 종료 후 설정 가능)</label>
+                        <div id="sessionsList" class="space-y-4">
+                        </div>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-gray-300 font-medium mb-2">참여자에게만 보일 메시지</label>
+                        <textarea 
+                            id="message_for_participants"
+                            placeholder="예: 단톡방 참여 링크, 준비물 안내 등"
+                            rows="4"
+                            class="w-full px-4 py-2 bg-neutral-700 border border-neutral-600 rounded text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-500 resize-none"
+                        ></textarea>
+                    </div>
+                    <div class="bg-neutral-700 rounded p-4 mb-6 border-yellow-500">
+                        <p class="text-sm text-gray-300">
+                            ※ 작성한 실험계획서는 선생님의 승인을 받은 후 공개됩니다.
+                        </p>
+                    </div>
+                    <button 
+                        type="submit"
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition"
+                    >
+                        실험계획서 제출
+                    </button>
+                </form>
+                <div id="successMessage" class="hidden mt-4 p-4 bg-green-900 border border-green-700 rounded text-green-100">
+                    ✓ 실험계획서가 정상적으로 제출되었습니다. 선생님의 승인을 기다려주세요!
+                </div>
+                <div id="errorMessage" class="hidden mt-4 p-4 bg-red-900 border border-red-700 rounded text-red-100">
+                    × <span id="errorText"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.getElementById('total_sessions').addEventListener('change', (e) => {
+            const totalSessions = parseInt(e.target.value) || 1;
+            const sessionsList = document.getElementById('sessionsList');
+            sessionsList.innerHTML = '';
+            for (let i = 1; i <= totalSessions; i++) {
+                const sessionDiv = document.createElement('div');
+                sessionDiv.className = 'bg-neutral-700 rounded p-4 border border-neutral-600 space-y-3';
+                sessionDiv.innerHTML = `
+                    <h4 class="text-gray-100 font-semibold">${i}번째 실험</h4>
+                    <div>
+                        <label class="block text-gray-400 text-sm mb-1">실험 날짜</label>
+                        <input 
+                            type="date" 
+                            class="session-date w-full px-3 py-2 bg-neutral-600 border border-neutral-500 rounded text-gray-100 focus:outline-none focus:border-blue-400"
+                            data-session="${i}"
+                        />
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-gray-400 text-sm mb-1">시작 시간</label>
+                            <input 
+                                type="time" 
+                                class="session-start w-full px-3 py-2 bg-neutral-600 border border-neutral-500 rounded text-gray-100 focus:outline-none focus:border-blue-400"
+                                data-session="${i}"
+                            />
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 text-sm mb-1">종료 시간</label>
+                            <input 
+                                type="time" 
+                                class="session-end w-full px-3 py-2 bg-neutral-600 border border-neutral-500 rounded text-gray-100 focus:outline-none focus:border-blue-400"
+                                data-session="${i}"
+                            />
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 text-sm mb-1">실험 내용 (선택사항)</label>
+                        <input 
+                            type="text" 
+                            placeholder="이 회차의 실험 내용을 간단히 설명해주세요"
+                            class="session-content w-full px-3 py-2 bg-neutral-600 border border-neutral-500 rounded text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-400"
+                            data-session="${i}"
+                        />
+                    </div>
+                `;
+                sessionsList.appendChild(sessionDiv);
+            }
+        });
+        document.getElementById('total_sessions').dispatchEvent(new Event('change'));
+        document.getElementById('experimentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const sessions = [];
+            const totalSessions = parseInt(document.getElementById('total_sessions').value) || 1;
+            const dateInputs = document.querySelectorAll('.session-date');
+            const startInputs = document.querySelectorAll('.session-start');
+            const endInputs = document.querySelectorAll('.session-end');
+            const contentInputs = document.querySelectorAll('.session-content');
+            for (let i = 1; i <= totalSessions; i++) {
+                sessions.push({
+                    number: i,
+                    date: dateInputs[i-1]?.value || '',
+                    start_time: startInputs[i-1]?.value || '',
+                    end_time: endInputs[i-1]?.value || '',
+                    content: contentInputs[i-1]?.value || ''
+                });
+            }
+            const data = {
+                title: document.getElementById('title').value,
+                description: document.getElementById('description').value,
+                max_participants: parseInt(document.getElementById('max_participants').value),
+                deadline: document.getElementById('deadline').value || null,
+                total_sessions: parseInt(document.getElementById('total_sessions').value) || 1,
+                message_for_participants: document.getElementById('message_for_participants').value,
+                subject: document.getElementById('subject').value,
+                sessions: sessions
+            };
+            try {
+                const response = await fetch('/regist', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                if (result.success) {
+                    document.getElementById('experimentForm').style.display = 'none';
+                    document.getElementById('successMessage').classList.remove('hidden');
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 2000);
+                } else {
+                    showError(result.error || '오류가 발생했습니다');
+                }
+            } catch (error) {
+                showError('제출 중 오류가 발생했습니다: ' + error.message);
+            }
+        });
+        function showError(message) {
+            document.getElementById('errorText').textContent = message;
+            document.getElementById('errorMessage').classList.remove('hidden');
+        }
+    </script>
+<footer class="bg-white border-t border-gray-200 text-gray-800 font-sans" style="z-index: 999;">
+    <div class="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div>
+        <div class="flex items-center space-x-4 mb-6">
+            <a>
+            <img src="https://raw.githubusercontent.com/Anion15/anion15.github.io/refs/heads/main/icon-.png" alt="logo" class="w-20 sm:w-14 md:w-18 lg:w-22 xl:w-26">
+            </a>
+        </div>
+        <ul class="space-y-3 text-base text-gray-600">
+            <li><span class="font-medium"><b>대표이메일</b></span> admin@apice.kr</li>
+            <li><span class="font-medium"><b>운영 형태</b></span> 실험 관리 시스템 | 1인 개발</li>
+        </ul>
+        </div>
+        <div></div>
+        <div class="flex flex-col items-start md:items-end space-y-6">
+        <div class="flex space-x-3">
+            <a href="https://www.instagram.com/yxbh.rh0" class="w-9 h-9 border rounded-full flex items-center justify-center hover:bg-gray-100">
+            <img src="https://simpleicons.org/icons/instagram.svg" class="w-4 h-4">
+            </a>
+            <a href="https://github.com/anion15" class="w-9 h-9 border rounded-full flex items-center justify-center hover:bg-gray-100">
+            <img src="https://simpleicons.org/icons/github.svg" class="w-4 h-4">
+            </a>
+        </div>
+        </div>
+    </div>
+<div class="border-t border-gray-200">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex flex-wrap gap-6 text-base text-gray-600">
+        
+        <a href="https://incheonsangjeong.icehs.kr/main.do" target="_blank" class="inline-flex items-center gap-1 font-semibold text-blue-600 hover:text-blue-800">
+            인천상정고등학교 홈페이지
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+                <path d="M5 12h14"></path>
+                <path d="M13 6l6 6-6 6"></path>
+            </svg>
+        </a>
+
+        <a href="https://commu.world" target="_blank" class="inline-flex items-center gap-1 font-semibold text-blue-600 hover:text-blue-800">
+            상정인사이드 바로가기
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+                <path d="M5 12h14"></path>
+                <path d="M13 6l6 6-6 6"></path>
+            </svg>
+        </a>
+
+    </div>
+    <div class="max-w-7xl mx-auto px-6 pb-6 text-sm text-gray-500">
+        상정인사이드는 apice.kr를 만든 개발자가 제작한 개인 프로젝트입니다.<br>
+        상정인사이드의 '상정'은 인천상정고등학교와 일체의 연관이 없습니다.
+    </div>
+</div>
+    <div class="max-w-7xl mx-auto px-6 py-3 text-sm text-gray-500 leading-relaxed">
+        본 서비스는 고등학생 개발자 1인이 개발한 프로젝트이며, 사용된 모든 이미지 및 관련 파일과 소스 코드의 출처는
+        전적으로 개발자에게 있음을 알립니다.
+    </div>
+    <div class="max-w-7xl mx-auto px-6 py-4 text-base text-gray-500 flex flex-col md:flex-row justify-between gap-2">
+        <span>© 2026 | 20116 윤주원. All rights reserved.</span>
+        <span>Developed by 윤주원</span>
+    </div>
+    <div id="site-status-bar" class="bg-gray-900 text-gray-200 text-base px-6 py-3 flex items-center gap-2">
+    <span id="site-badge" class="font-semibold">
+        Apice.kr
+    </span>
+
+    <span id="site-status-text" class="opacity-80">
+        v1.0.0
+    </span>
+    </div>
+    </footer>
+    <style>
+    a svg {
+    transition: transform 0.2s ease;
+    }
+    a:hover svg {
+    transform: translateX(3px);
+    }
+
+    .dark-theme footer img{
+    filter: brightness(0) invert(1);
+    }
+    </style>
+</body>
+<script>
+    window.addEventListener("load", function () {
+        console.log(`%c
+        인천상정고등학교 아피체 동아리 \n%c
+
+                            ##                                ###                %c
+                                                              ##    ##           %c
+        ####    ######    ###      ####     ####              ##  ##  ######     %c
+            ##    ##  ##    ##     ##  ##   ##  ##             ## ##    ##  ##   %c
+        #####    ##  ##    ##     ##       ######             ####     ##        %c
+        ##  ##    #####     ##     ##  ##   ##         ##      ## ##    ##       %c
+        #####    ##       ####     ####     #####     ##      ##  ##  ####      
+                ####                                                            
+
+                                            Made by Anion15 (instagram: yxbh.rh0)                              
+
+                                                                `,
+            `color: white; font-size: 10px; padding:2px 0; font-family: monospace`,
+            `color: #00a3a4;`,
+            `color: #007498;`,
+            `color: #1e4572;`,
+            `color: #005c8b;`,
+            `color: #008ba0;`,
+            `color: #00a3a4;`,
+            `color: #007498;`,
+            )
+        console.log(
+        "%c위험!\n\n" +
+        "%c이 기능은 일반 사용자가 아닌 개발자를 위해 " +
+        "브라우저에서 제공되는 기능입니다.\n\n" +
+        "여기에 임의의 코드를 입력하거나 " +
+        "타인의 지시에 따라 실행할 경우 " +
+        "서비스 이용에 심각한 피해가 " +
+        "발생할 수 있습니다.\n",
+        "color:#ff3b3b;font-size:42px;font-weight:900;",
+        "color:#ffffff;font-size:14px;line-height:1.6;"
+        );
+    });
+</script>
+</html>

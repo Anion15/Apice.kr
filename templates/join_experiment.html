@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>실험 참여하기 - Apice동아리</title>
+    <link rel='icon' type="image/png" href="https://raw.githubusercontent.com/Anion15/anion15.github.io/refs/heads/main/icon-.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif !important;letter-spacing: -0.02em;overflow-x: hidden;background-color: #171717 translate="no"}
+        html, body {overflow-x: hidden;position: relative;width: 100%;   -ms-overflow-style: none; scrollbar-width: none;}
+        html ::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-neutral-900 text-gray-100">
+    <div class="min-h-screen py-12 px-4">
+        <div class="max-w-4xl mx-auto">
+            <div class="mb-8">
+                <a href="/" class="text-gray-400 hover:text-gray-300 mb-4 inline-block">← 돌아가기</a>
+                <h1 class="text-3xl font-bold text-gray-100">실험 참여하기</h1>
+                <p class="text-gray-400 mt-2">흥미로운 실험에 참여해보세요</p>
+            </div>
+            <div id="experimentsList" class="space-y-4">
+                <div class="text-center py-12">
+                    <p class="text-gray-400">로딩 중...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div class="bg-neutral-800 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-neutral-700">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 id="modalTitle" class="text-2xl font-bold text-gray-100"></h2>
+                    <div class="flex gap-3">
+                        <button id="shareBtn" class="text-gray-400 hover:text-gray-300 transition" title="공유하기">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.658 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                            </svg>
+                        </button>
+                        <button onclick="closeModal()" class="text-gray-400 hover:text-gray-300">✕</button>
+                    </div>
+                </div>
+                <div id="modalContent" class="space-y-4 text-gray-300 mb-6">
+                    <div id="deadlineInfo" class="bg-neutral-700 rounded p-4 border border-neutral-600">
+                        <div class="flex justify-between mb-2">
+                            <span class="text-gray-400">모집 마감:</span>
+                            <div class="flex gap-4 items-center">
+                                <div class="flex gap-2">
+                                    <span id="deadlineText" class="text-gray-200 font-medium">-</span>
+                                    <span id="deadlineStatus" class="font-medium">-</span>
+                                </div>
+                                <span class="text-gray-500">|</span>
+                                <div class="flex gap-2">
+                                    <span class="text-gray-400">과목:</span>
+                                    <span id="subjectText" class="text-purple-400 font-medium">-</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">남은 시간:</span>
+                            <span id="timeLeft" class="text-blue-400 font-bold">-</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-100 mb-2">실험 설명</h4>
+                        <p id="experimentDescription" class="whitespace-pre-wrap">-</p>
+                    </div>
+                    <div id="sessionsInfo">
+                        <h4 class="font-semibold text-gray-100 mb-2">실험 일정</h4>
+                        <div id="sessionsList" class="bg-neutral-700 rounded p-4 text-sm space-y-2">
+                        </div>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <div>
+                            <span class="text-gray-400">작성자: </span>
+                            <span class="text-gray-200" id="createdByText">-</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-400">모집 인원: </span>
+                            <span class="text-blue-400 font-bold" id="participantsCountText">-</span>
+                        </div>
+                    </div>
+                    <div id="messageForParticipants" class="hidden bg-yellow-900 rounded p-4 border border-yellow-700">
+                        <h4 class="font-semibold text-yellow-100 mb-2">공지사항</h4>
+                        <p id="messageText" class="text-yellow-100 text-sm whitespace-pre-wrap">-</p>
+                    </div>
+                </div>
+                <div id="participantsSection" class="mb-6 hidden">
+                    <h3 class="text-lg font-semibold text-gray-100 mb-3">참여자</h3>
+                    <div id="participantsList" class="bg-neutral-700 rounded p-4 text-sm text-gray-300">
+                    </div>
+                </div>
+
+                <form id="applyForm" class="space-y-4 hidden">
+                    <input type="hidden" id="experimentId" />
+                    <div class="bg-neutral-700 rounded p-4 border border-neutral-600 space-y-2">
+                        <h4 class="font-semibold text-gray-100 mb-3">참여자 정보</h4>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">이름:</span>
+                            <span id="displayName" class="text-gray-200 font-medium">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">학년:</span>
+                            <span id="displayGrade" class="text-gray-200 font-medium">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">반:</span>
+                            <span id="displayClass" class="text-gray-200 font-medium">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">번호:</span>
+                            <span id="displayNumber" class="text-gray-200 font-medium">-</span>
+                        </div>
+                    </div>
+                    <div class="bg-neutral-700 rounded p-4 border-blue-500">
+                        <p class="text-sm text-gray-300">
+                            ※ 로그인된 정보로 참여 신청이 진행됩니다. 참여 신청 후 선생님의 승인을 기다려주세요.
+                        </p>
+                    </div>
+                    <button 
+                        type="submit"
+                        class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded transition"
+                    >
+                        참여 신청
+                    </button>
+                </form>
+                <div id="alreadyParticipatedMsg" class="hidden p-4 bg-green-900 border border-green-700 rounded text-green-100 text-center">
+                    ✓ 이미 이 실험에 참여 신청했습니다!
+                </div>
+                <div id="successMsg" class="hidden mt-4 p-4 bg-green-900 border border-green-700 rounded text-green-100">
+                    ✓ 참여 신청이 완료되었습니다!
+                </div>
+                <div id="errorMsg" class="hidden mt-4 p-4 bg-red-900 border border-red-700 rounded text-red-100">
+                    × <span id="errorText"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="notificationContainer" class="fixed top-4 right-4 z-50 max-w-md space-y-2"></div>
+    <script>
+        let allExperiments = [];
+        let currentUser = null;
+        async function loadUserInfo() {
+            try {
+                const response = await fetch('/api/user');
+                const data = await response.json();
+                currentUser = data;
+                if (data.logged_in) {
+                    checkNotifications();
+                }
+            } catch (error) {
+                console.error('Error loading user info:', error);
+            }
+        }
+        async function checkNotifications() {
+            try {
+                const response = await fetch('/api/notifications');
+                const notifications = await response.json();
+
+                for (const notif of notifications) {
+                    if (!notif.read_status) {
+                        showNotification(notif.message, notif.id);
+                    }
+                }
+            } catch (error) {
+                console.error('Error checking notifications:', error);
+            }
+        }
+        function showNotification(message, notificationId) {
+            const container = document.getElementById('notificationContainer');
+            const toast = document.createElement('div');
+            toast.className = 'bg-blue-600 text-white px-6 py-4 rounded-lg shadow-lg border border-blue-500 animate-pulse';
+            toast.innerHTML = `
+                <div class="flex justify-between items-start">
+                    <div>${message}</div>
+                    <button onclick="this.parentElement.parentElement.remove()" class="text-blue-200 hover:text-white ml-2">✕</button>
+                </div>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => {
+                fetch(`/api/notifications/${notificationId}/read`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                }).catch(err => console.error('Error marking notification as read:', err));
+
+                toast.remove();
+            }, 5000);
+        }
+        async function loadExperiments() {
+            try {
+                const response = await fetch('/api/experiments');
+                const experiments = await response.json();
+                allExperiments = experiments;
+                if (experiments.length === 0) {
+                    document.getElementById('experimentsList').innerHTML = `
+                        <div class="text-center py-12">
+                            <p class="text-gray-400">현재 모집 중인 실험이 없습니다.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                const now = new Date();
+                experiments.sort((a, b) => {
+                    const getPriority = (exp) => {
+                        if (exp.status === '모집중') {
+                            const deadline = new Date(exp.deadline);
+                            const daysLeft = (deadline - now) / (1000 * 60 * 60 * 24);
+                            return daysLeft > 0 ? daysLeft : 999;
+                        } else if (exp.status === '진행중') {
+                            return -1000;
+                        } else {
+                            return 10000;
+                        }
+                    };
+                    return getPriority(a) - getPriority(b);
+                });
+                document.getElementById('experimentsList').innerHTML = experiments.map(exp => {
+                    const isOwnExperiment = currentUser && currentUser.id === exp.created_by_id;
+                    const bgClass = isOwnExperiment ? 'bg-blue-900 border-blue-700' : 'bg-neutral-800 border-neutral-700';
+                    const hoverClass = isOwnExperiment ? 'hover:border-blue-600' : 'hover:border-neutral-600';
+                    return `
+                    <div class="${bgClass} border rounded-lg p-6 ${hoverClass} transition cursor-pointer experiment-card" data-experiment-id="${exp.id}">
+                        ${isOwnExperiment ? '<div class="mb-3 px-3 py-1 bg-blue-800 bg-opacity-70 border border-blue-600 rounded text-blue-200 text-xs font-semibold inline-block">내가 만든 실험</div>' : ''}
+                        <h3 class="text-xl font-semibold text-gray-100 mb-2">${exp.title}</h3>
+                        <p class="text-gray-400 text-sm mb-3">${exp.description.substring(0, 100)}...</p>
+                        <div class="flex justify-between items-center text-sm text-gray-400 mb-3">
+                            <div>
+                                <span class="font-medium">모집 인원:</span>
+                                <span class="text-blue-400 font-bold">${exp.participants_count}/${exp.max_participants}</span>
+                            </div>
+                            <div class="text-gray-500">작성자: ${exp.created_by}</div>
+                        </div>
+                        <div class="inline-block px-3 py-1 rounded text-xs font-semibold ${
+                            exp.status === '모집중' ? 'bg-green-900 text-green-200' :
+                            exp.status === '진행중' ? 'bg-yellow-900 text-yellow-200' :
+                            'bg-gray-800 text-gray-300'
+                        }">
+                            ${exp.status}
+                        </div>
+                        ${isOwnExperiment ? '<div class="mt-3 p-3 bg-blue-800 bg-opacity-50 border border-blue-600 rounded text-blue-100 text-xs">💡 내가 만든 실험의 내용이나 요소를 수정하고 싶으면 선생님께 문의하세요.</div>' : ''}
+                    </div>
+                    `;
+                }).join('');
+                document.querySelectorAll('.experiment-card').forEach(card => {
+                    card.addEventListener('click', function() {
+                        const expId = this.getAttribute('data-experiment-id');
+                        openModal(parseInt(expId));
+                    });
+                });
+            } catch (error) {
+                console.error('Error loading experiments:', error);
+                document.getElementById('experimentsList').innerHTML = `
+                    <div class="text-center py-12">
+                        <p class="text-red-400">실험 목록을 불러올 수 없습니다.</p>
+                    </div>
+                `;
+            }
+        }
+        async function openModal(expId) {
+            if (!currentUser || !currentUser.logged_in) {
+                alert('로그인이 필요합니다. 로그인 페이지로 이동합니다.');
+                window.location.href = '/login';
+                return;
+            }
+            window.history.pushState({ experimentId: expId }, '', `/join?id=${expId}`);
+            try {
+                const response = await fetch(`/api/experiments/${expId}`);
+                const exp = await response.json();
+                document.getElementById('experimentId').value = expId;
+                document.getElementById('modalTitle').textContent = exp.title;
+                let deadlineText = '정보 없음';
+                let deadlineStatusHTML = '';
+                let timeLeftText = '-';
+                let isClosed = false;
+                if (exp.deadline) {
+                    try {
+                        const deadline = new Date(exp.deadline);
+                        const now = new Date();
+                        const timeLeft = deadline - now;
+                        if (timeLeft > 0) {
+                            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+                            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                            
+                            deadlineText = deadline.toLocaleString('ko-KR');
+                            timeLeftText = `${days}일 ${hours}시간 ${minutes}분 남음`;
+                            deadlineStatusHTML = '<span class="text-green-400">모집 중</span>';
+                        } else {
+                            deadlineText = deadline.toLocaleString('ko-KR');
+                            isClosed = true;
+                            if (exp.all_sessions_completed) {
+                                timeLeftText = '모든 실험이 완료되었습니다';
+                                deadlineStatusHTML = '<span class="text-gray-400">모든 실험 종료</span>';
+                            } else if (exp.current_session) {
+                                timeLeftText = `${exp.current_session.session_number}번째 실험 진행 중`;
+                                deadlineStatusHTML = '<span class="text-blue-400">현재 실험 중</span>';
+                            } else if (exp.next_session) {
+                                const nextSessionDate = new Date(exp.next_session.session_date + 'T' + exp.next_session.start_time);
+                                const timeUntilNext = nextSessionDate - now;
+                                const days2 = Math.floor(timeUntilNext / (1000 * 60 * 60 * 24));
+                                const hours2 = Math.floor((timeUntilNext % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                                const minutes2 = Math.floor((timeUntilNext % (1000 * 60 * 60)) / (1000 * 60));
+                                if (timeUntilNext > 0) {
+                                    timeLeftText = `다음 ${exp.next_session.session_number}번째 실험이 ${days2}일 ${hours2}시간 ${minutes2}분 후에 있습니다`;
+                                } else {
+                                    timeLeftText = `다음 ${exp.next_session.session_number}번째 실험이 지금 진행중입니다`;
+                                }
+                                deadlineStatusHTML = '<span class="text-yellow-400">실험 대기 중</span>';
+                            } else {
+                                timeLeftText = '일정 대기 중';
+                                deadlineStatusHTML = '<span class="text-yellow-400">실험 대기 중</span>';
+                            }
+                        }
+                    } catch (e) {
+                        console.error('Date parsing error:', e);
+                        deadlineText = exp.deadline;
+                        deadlineStatusHTML = '<span class="text-gray-400">-</span>';
+                    }
+                } else {
+                    deadlineStatusHTML = '<span class="text-gray-500">정보 없음</span>';
+                }
+                document.getElementById('deadlineText').textContent = deadlineText;
+                document.getElementById('deadlineStatus').innerHTML = deadlineStatusHTML;
+                document.getElementById('subjectText').textContent = exp.subject || '-';
+                document.getElementById('timeLeft').textContent = timeLeftText;
+                document.getElementById('experimentDescription').textContent = exp.description;
+                document.getElementById('createdByText').textContent = exp.created_by;
+                document.getElementById('participantsCountText').textContent = `${exp.participants_count}/${exp.max_participants}`;
+                let sessionsHTML = '';
+                if (exp.sessions && exp.sessions.length > 0) {
+                    const uniqueSessions = [];
+                    const seenNumbers = new Set();
+                    for (const session of exp.sessions) {
+                        if (!seenNumbers.has(session.session_number)) {
+                            uniqueSessions.push(session);
+                            seenNumbers.add(session.session_number);
+                        }
+                    }
+                    sessionsHTML = uniqueSessions.map(session => {
+                        let dateStr = '날짜 정보 없음';
+                        if (session.session_date) {
+                            try {
+                                const parts = session.session_date.split('-');
+                                if (parts.length === 3) {
+                                    const year = parseInt(parts[0]);
+                                    const month = parseInt(parts[1]);
+                                    const day = parseInt(parts[2]);
+                                    dateStr = `${year}. ${month}. ${day}.`;
+                                }
+                            } catch (e) {
+                                console.error('Date parsing error:', session.session_date, e);
+                            }
+                        }
+                        const startTime = session.start_time || '-';
+                        const endTime = session.end_time || '-';
+                        const content = session.content ? `<div class="text-xs text-gray-400 mt-1">내용: ${session.content}</div>` : '';
+                        return `
+                            <div class="border-l-4 border-purple-500 pl-3 pb-3">
+                                <div class="font-medium text-gray-100">${session.session_number}번째 실험</div>
+                                <div class="text-xs text-gray-400">날짜: ${dateStr}</div>
+                                <div class="text-xs text-gray-400">시간: ${startTime} ~ ${endTime}</div>
+                                ${content}
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    sessionsHTML = '<div class="text-gray-500 text-sm">아직 일정이 없습니다</div>';
+                }
+                document.getElementById('sessionsList').innerHTML = sessionsHTML;
+                const messageDiv = document.getElementById('messageForParticipants');
+                if (exp.message_for_participants && exp.user_participated) {
+                    messageDiv.classList.remove('hidden');
+                    document.getElementById('messageText').textContent = exp.message_for_participants;
+                } else {
+                    messageDiv.classList.add('hidden');
+                }
+                const applyForm = document.getElementById('applyForm');
+                const alreadyParticipatedMsg = document.getElementById('alreadyParticipatedMsg');
+                const participantsSection = document.getElementById('participantsSection');
+                participantsSection.classList.remove('hidden');
+                alreadyParticipatedMsg.classList.add('hidden');
+                if (isClosed) {
+                    applyForm.classList.add('hidden');
+                } else {
+                    if (exp.user_participated) {
+                        applyForm.classList.add('hidden');
+                    } else {
+                        applyForm.classList.remove('hidden');
+                        document.getElementById('displayName').textContent = currentUser.name || '-';
+                        document.getElementById('displayGrade').textContent = (currentUser.grade || '-') + '학년';
+                        document.getElementById('displayClass').textContent = (currentUser.class_num || '-') + '반';
+                        document.getElementById('displayNumber').textContent = (currentUser.number || '-') + '번';
+                    }
+                }
+                if (exp.participants && exp.participants.length > 0) {
+                    document.getElementById('participantsList').innerHTML = exp.participants
+                        .map(p => `<div class="py-2">• ${p.name} (${p.grade}학년 ${p.class}반 ${p.number}번)</div>`)
+                        .join('');
+                } else {
+                    document.getElementById('participantsList').innerHTML = '<div class="text-gray-500">아직 참여자가 없습니다</div>';
+                }
+                document.getElementById('modal').classList.remove('hidden');
+                document.getElementById('successMsg').classList.add('hidden');
+                document.getElementById('errorMsg').classList.add('hidden');
+                document.getElementById('shareBtn').onclick = shareExperiment;
+            } catch (error) {
+                console.error('Error opening modal:', error);
+            }
+        }
+        function closeModal() {
+            document.getElementById('modal').classList.add('hidden');
+            window.history.pushState({}, '', '/join');
+        }
+        function shareExperiment() {
+            const experimentId = document.getElementById('experimentId').value;
+            if (!experimentId) return;
+            const shareUrl = `${window.location.origin}/join?id=${experimentId}`;
+            navigator.clipboard.writeText(shareUrl).then(() => {
+                alert('URL이 클립보드에 복사되었습니다!');
+                const shareButton = document.getElementById('shareBtn');
+                shareButton.classList.add('text-green-400');
+                setTimeout(() => {
+                    shareButton.classList.remove('text-green-400');
+                }, 2000);
+            }).catch(err => {
+                alert(`복사에 실패했습니다. 수동으로 복사해주세요:\n${shareUrl}`);
+            });
+        }
+        document.getElementById('applyForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const experimentId = document.getElementById('experimentId').value;
+            try {
+                const response = await fetch('/api/apply', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        experiment_id: experimentId
+                    })
+                });
+                const result = await response.json();
+                if (response.status === 401 && result.login_required) {
+                    showError('로그인이 필요합니다. 로그인 페이지로 이동합니다.');
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 1500);
+                    return;
+                }
+                if (result.success) {
+                    document.getElementById('applyForm').style.display = 'none';
+                    document.getElementById('successMsg').classList.remove('hidden');
+                    setTimeout(() => {
+                        closeModal();
+                        loadExperiments();
+                        document.getElementById('applyForm').style.display = 'block';
+                    }, 1500);
+                } else {
+                    showError(result.error || '오류가 발생했습니다');
+                }
+            } catch (error) {
+                showError('신청 중 오류가 발생했습니다: ' + error.message);
+            }
+        });
+        function showError(message) {
+            document.getElementById('errorText').textContent = message;
+            document.getElementById('errorMsg').classList.remove('hidden');
+        }
+        document.getElementById('modal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('modal')) {
+                closeModal();
+            }
+        });
+        loadUserInfo().then(() => {
+            loadExperiments().then(() => {
+                const params = new URLSearchParams(window.location.search);
+                const expId = params.get('id');
+                if (expId) {
+                    openModal(parseInt(expId));
+                }
+            });
+        });
+    </script>
+<footer class="bg-white border-t border-gray-200 text-gray-800 font-sans" style="z-index: 999;">
+    <div class="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div>
+        <div class="flex items-center space-x-4 mb-6">
+            <a>
+            <img src="https://raw.githubusercontent.com/Anion15/anion15.github.io/refs/heads/main/icon-.png" alt="logo" class="w-20 sm:w-14 md:w-18 lg:w-22 xl:w-26">
+            </a>
+        </div>
+        <ul class="space-y-3 text-base text-gray-600">
+            <li><span class="font-medium"><b>대표이메일</b></span> admin@apice.kr</li>
+            <li><span class="font-medium"><b>운영 형태</b></span> 실험 관리 시스템 | 1인 개발</li>
+        </ul>
+        </div>
+        <div></div>
+        <div class="flex flex-col items-start md:items-end space-y-6">
+        <div class="flex space-x-3">
+            <a href="https://www.instagram.com/yxbh.rh0" class="w-9 h-9 border rounded-full flex items-center justify-center hover:bg-gray-100">
+            <img src="https://simpleicons.org/icons/instagram.svg" class="w-4 h-4">
+            </a>
+            <a href="https://github.com/anion15" class="w-9 h-9 border rounded-full flex items-center justify-center hover:bg-gray-100">
+            <img src="https://simpleicons.org/icons/github.svg" class="w-4 h-4">
+            </a>
+        </div>
+        </div>
+    </div>
+<div class="border-t border-gray-200">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex flex-wrap gap-6 text-base text-gray-600">
+        
+        <a href="https://incheonsangjeong.icehs.kr/main.do" target="_blank" class="inline-flex items-center gap-1 font-semibold text-blue-600 hover:text-blue-800">
+            인천상정고등학교 홈페이지
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+                <path d="M5 12h14"></path>
+                <path d="M13 6l6 6-6 6"></path>
+            </svg>
+        </a>
+
+        <a href="https://commu.world" target="_blank" class="inline-flex items-center gap-1 font-semibold text-blue-600 hover:text-blue-800">
+            상정인사이드 바로가기
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+                <path d="M5 12h14"></path>
+                <path d="M13 6l6 6-6 6"></path>
+            </svg>
+        </a>
+
+    </div>
+    <div class="max-w-7xl mx-auto px-6 pb-6 text-sm text-gray-500">
+        상정인사이드는 apice.kr를 만든 개발자가 제작한 개인 프로젝트입니다.<br>
+        상정인사이드의 '상정'은 인천상정고등학교와 일체의 연관이 없습니다.
+    </div>
+</div>
+    <div class="max-w-7xl mx-auto px-6 py-3 text-sm text-gray-500 leading-relaxed">
+        본 서비스는 고등학생 개발자 1인이 개발한 프로젝트이며, 사용된 모든 이미지 및 관련 파일과 소스 코드의 출처는
+        전적으로 개발자에게 있음을 알립니다.
+    </div>
+    <div class="max-w-7xl mx-auto px-6 py-4 text-base text-gray-500 flex flex-col md:flex-row justify-between gap-2">
+        <span>© 2026 | 20116 윤주원. All rights reserved.</span>
+        <span>Developed by 윤주원</span>
+    </div>
+    <div id="site-status-bar" class="bg-gray-900 text-gray-200 text-base px-6 py-3 flex items-center gap-2">
+    <span id="site-badge" class="font-semibold">
+        Apice.kr
+    </span>
+
+    <span id="site-status-text" class="opacity-80">
+        v1.0.0
+    </span>
+    </div>
+    </footer>
+    <style>
+    a svg {
+    transition: transform 0.2s ease;
+    }
+    a:hover svg {
+    transform: translateX(3px);
+    }
+
+    .dark-theme footer img{
+    filter: brightness(0) invert(1);
+    }
+    </style>
+</body>
+<script>
+    window.addEventListener("load", function () {
+        console.log(`%c
+        인천상정고등학교 아피체 동아리 \n%c
+
+                            ##                                ###                %c
+                                                              ##    ##           %c
+        ####    ######    ###      ####     ####              ##  ##  ######     %c
+            ##    ##  ##    ##     ##  ##   ##  ##             ## ##    ##  ##   %c
+        #####    ##  ##    ##     ##       ######             ####     ##        %c
+        ##  ##    #####     ##     ##  ##   ##         ##      ## ##    ##       %c
+        #####    ##       ####     ####     #####     ##      ##  ##  ####      
+                ####                                                            
+
+                                            Made by Anion15 (instagram: yxbh.rh0)                              
+
+                                                                `,
+            `color: white; font-size: 10px; padding:2px 0; font-family: monospace`,
+            `color: #00a3a4;`,
+            `color: #007498;`,
+            `color: #1e4572;`,
+            `color: #005c8b;`,
+            `color: #008ba0;`,
+            `color: #00a3a4;`,
+            `color: #007498;`,
+            )
+        console.log(
+        "%c위험!\n\n" +
+        "%c이 기능은 일반 사용자가 아닌 개발자를 위해 " +
+        "브라우저에서 제공되는 기능입니다.\n\n" +
+        "여기에 임의의 코드를 입력하거나 " +
+        "타인의 지시에 따라 실행할 경우 " +
+        "서비스 이용에 심각한 피해가 " +
+        "발생할 수 있습니다.\n",
+        "color:#ff3b3b;font-size:42px;font-weight:900;",
+        "color:#ffffff;font-size:14px;line-height:1.6;"
+        );
+    });
+</script>
+</html>

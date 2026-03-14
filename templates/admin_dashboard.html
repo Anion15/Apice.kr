@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 대시보드 - Apice동아리</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel='icon' type="image/png" href="https://raw.githubusercontent.com/Anion15/anion15.github.io/refs/heads/main/icon-.png">
+    <style>
+        body {font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif !important;letter-spacing: -0.02em;overflow-x: hidden;background-color: #171717 translate="no"}
+        html, body {overflow-x: hidden;position: relative;width: 100%;   -ms-overflow-style: none; scrollbar-width: none;}
+        html ::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-neutral-900 text-gray-100">
+    <div class="min-h-screen py-12 px-4">
+        <div class="max-w-6xl mx-auto">
+            <div class="mb-8 flex justify-between items-start">
+                <div>
+                    <a href="/" class="text-gray-400 hover:text-gray-300 mb-4 inline-block">← 홈으로</a>
+                    <h1 class="text-3xl font-bold text-gray-100">관리자 대시보드</h1>
+                    <p class="text-gray-400 mt-2">실험계획서와 참여자 신청을 관리하세요</p>
+                </div>
+                <div class="bg-neutral-800 border border-neutral-700 rounded-lg p-4 text-right">
+                    <p class="text-gray-400 text-sm">선생님</p>
+                    <p id="userName" class="text-gray-100 font-semibold">로딩 중...</p>
+                    <a href="/logout" class="text-red-400 hover:text-red-300 text-sm mt-2 inline-block">로그아웃</a>
+                </div>
+            </div>
+            <div class="bg-neutral-800 border border-neutral-700 rounded-lg p-6 mb-8">
+                <label class="block text-gray-300 font-medium mb-2">선생님 이름</label>
+                <input 
+                    type="text" 
+                    id="teacherName"
+                    placeholder="선생님 이름을 입력하세요"
+                    class="w-full max-w-xs px-4 py-2 bg-neutral-700 border border-neutral-600 rounded text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                />
+            </div>
+            <div class="flex gap-4 mb-8 overflow-x-auto">
+                <button 
+                    onclick="showTab('experiments')"
+                    class="px-6 py-2 rounded font-medium transition tab-btn active whitespace-nowrap"
+                    data-tab="experiments"
+                >
+                    실험계획서 승인
+                </button>
+                <button 
+                    onclick="showTab('participants')"
+                    class="px-6 py-2 rounded font-medium transition tab-btn whitespace-nowrap"
+                    data-tab="participants"
+                >
+                    참여자 승인
+                </button>
+                <button 
+                    onclick="showTab('students')"
+                    class="px-6 py-2 rounded font-medium transition tab-btn whitespace-nowrap"
+                    data-tab="students"
+                >
+                    학생 계정 관리
+                </button>
+                <button 
+                    onclick="showTab('manage-all')"
+                    class="px-6 py-2 rounded font-medium transition tab-btn whitespace-nowrap"
+                    data-tab="manage-all"
+                >
+                    모든 실험 관리
+                </button>
+            </div>
+            <div id="experiments" class="tab-content space-y-4">
+                <h2 class="text-xl font-semibold text-gray-100 mb-4">승인 대기 중인 실험계획서</h2>
+                <div id="experimentsList" class="space-y-4">
+                    <div class="text-center py-12 text-gray-400">로딩 중...</div>
+                </div>
+            </div>
+            <div id="participants" class="tab-content space-y-4 hidden">
+                <h2 class="text-xl font-semibold text-gray-100 mb-4">승인 대기 중인 참여자</h2>
+                <div id="participantsList" class="space-y-4">
+                    <div class="text-center py-12 text-gray-400">로딩 중...</div>
+                </div>
+            </div>
+            <div id="students" class="tab-content space-y-4 hidden">
+                <h2 class="text-xl font-semibold text-gray-100 mb-4">학생 계정 관리</h2>
+                <div class="bg-neutral-800 border border-neutral-700 rounded-lg p-6 mb-6">
+                    <h3 class="text-lg font-semibold text-gray-100 mb-4">새 학생 계정 생성</h3>
+                    <form id="createStudentForm" class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-gray-300 font-medium mb-2">이름 *</label>
+                                <input 
+                                    type="text" 
+                                    id="studentName"
+                                    required
+                                    placeholder="김상정"
+                                    class="w-full px-4 py-2 bg-neutral-700 border border-neutral-600 rounded text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                                />
+                            </div>
+                            <div>
+                                <label class="block text-gray-300 font-medium mb-2">아이디 *</label>
+                                <input 
+                                    type="text" 
+                                    id="studentUsername"
+                                    required
+                                    placeholder="최소 3자"
+                                    class="w-full px-4 py-2 bg-neutral-700 border border-neutral-600 rounded text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                                />
+                            </div>
+                            <div>
+                                <label class="block text-gray-300 font-medium mb-2">비밀번호 *</label>
+                                <input 
+                                    type="password" 
+                                    id="studentPassword"
+                                    required
+                                    placeholder="최소 4자"
+                                    class="w-full px-4 py-2 bg-neutral-700 border border-neutral-600 rounded text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                                />
+                            </div>
+                            <div>
+                                <label class="block text-gray-300 font-medium mb-2">학년 *</label>
+                                <select 
+                                    id="studentGrade"
+                                    required
+                                    class="w-full px-4 py-2 bg-neutral-700 border border-neutral-600 rounded text-gray-100 focus:outline-none focus:border-blue-500"
+                                >
+                                    <option value="">선택하세요</option>
+                                    <option value="1">1학년</option>
+                                    <option value="2">2학년</option>
+                                    <option value="3">3학년</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-gray-300 font-medium mb-2">반 *</label>
+                                <select 
+                                    id="studentClass"
+                                    required
+                                    class="w-full px-4 py-2 bg-neutral-700 border border-neutral-600 rounded text-gray-100 focus:outline-none focus:border-blue-500"
+                                >
+                                    <option value="">선택하세요</option>
+                                    <option value="1">1반</option>
+                                    <option value="2">2반</option>
+                                    <option value="3">3반</option>
+                                    <option value="4">4반</option>
+                                    <option value="5">5반</option>
+                                    <option value="6">6반</option>
+                                    <option value="7">7반</option>
+                                    <option value="8">8반</option>
+                                    <option value="9">9반</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-gray-300 font-medium mb-2">번호 *</label>
+                                <input 
+                                    type="number" 
+                                    id="studentNumber"
+                                    required
+                                    placeholder="1-50"
+                                    min="1"
+                                    max="50"
+                                    class="w-full px-4 py-2 bg-neutral-700 border border-neutral-600 rounded text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                                />
+                            </div>
+                        </div>
+                        <button 
+                            type="submit"
+                            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition"
+                        >
+                            계정 생성
+                        </button>
+                    </form>
+                    <div id="createStudentMessage" class="hidden mt-4 p-4 rounded border">
+                        <span id="createStudentMessageText"></span>
+                    </div>
+                </div>
+                <div class="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-100 mb-4">등록된 학생</h3>
+                    <div id="studentsList" class="space-y-4">
+                        <div class="text-center py-12 text-gray-400">로딩 중...</div>
+                    </div>
+                </div>
+            </div>
+            <div id="manage-all" class="tab-content space-y-4 hidden">
+                <h2 class="text-xl font-semibold text-gray-100 mb-4">모든 실험 관리</h2>
+                <div id="manageAllList" class="space-y-4">
+                    <div class="text-center py-12 text-gray-400">로딩 중...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+        .tab-btn {
+            background-color: #262626;
+            color: #a3a3a3;
+        }
+        .tab-btn.active {
+            background-color: #3b82f6;
+            color: white;
+        }
+        .tab-btn:hover {
+            background-color: #404040;
+        }
+        .tab-btn.active:hover {
+            background-color: #2563eb;
+        }
+    </style>
+
+    <script>
+        async function loadUserInfo() {
+            try {
+                const response = await fetch('/api/user');
+                const data = await response.json();
+                if (data.logged_in) {
+                    document.getElementById('userName').textContent = data.name;
+                } else {
+                    window.location.href = '/login';
+                }
+            } catch (error) {
+                console.error('Error loading user info:', error);
+            }
+        }
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabName).classList.remove('hidden');
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            if (tabName === 'experiments') {
+                loadPendingExperiments();
+            } else if (tabName === 'participants') {
+                loadPendingParticipants();
+            } else if (tabName === 'students') {
+                loadStudents();
+            } else if (tabName === 'manage-all') {
+                loadAllExperiments();
+            }
+        }
+        async function loadPendingExperiments() {
+            try {
+                const response = await fetch('/api/admin/pending-experiments');
+                const experiments = await response.json();
+
+                if (experiments.length === 0) {
+                    document.getElementById('experimentsList').innerHTML = `
+                        <div class="text-center py-12 text-gray-400">
+                            승인 대기 중인 실험계획서가 없습니다.
+                        </div>
+                    `;
+                    return;
+                }
+                document.getElementById('experimentsList').innerHTML = experiments.map(exp => `
+                    <div class="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold text-gray-100 mb-2">${exp.title}</h3>
+                        <p class="text-gray-400 mb-3">${exp.description}</p>
+                        <div class="grid grid-cols-2 gap-4 text-sm text-gray-400 mb-4">
+                            <div>
+                                <span class="text-gray-300">작성자:</span>
+                                <span class="text-gray-200"> ${exp.created_by}</span>
+                            </div>
+                            <div>
+                                <span class="text-gray-300">모집 인원:</span>
+                                <span class="text-blue-400 font-bold"> ${exp.max_participants}명</span>
+                            </div>
+                            <div>
+                                <span class="text-gray-300">작성 일시:</span>
+                                <span class="text-gray-200"> ${new Date(exp.created_at).toLocaleDateString('ko-KR')}</span>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button 
+                                onclick="approveExperiment(${exp.id})"
+                                class="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded transition"
+                            >
+                                승인
+                            </button>
+                            <button 
+                                onclick="rejectExperiment(${exp.id})"
+                                class="flex-1 bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded transition"
+                            >
+                                거절
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading experiments:', error);
+                document.getElementById('experimentsList').innerHTML = `
+                    <div class="text-center py-12 text-red-400">
+                        실험계획서를 불러올 수 없습니다.
+                    </div>
+                `;
+            }
+        }
+        async function loadPendingParticipants() {
+            try {
+                const response = await fetch('/api/admin/pending-participants');
+                const participants = await response.json();
+
+                if (participants.length === 0) {
+                    document.getElementById('participantsList').innerHTML = `
+                        <div class="text-center py-12 text-gray-400">
+                            승인 대기 중인 참여자가 없습니다.
+                        </div>
+                    `;
+                    return;
+                }
+                document.getElementById('participantsList').innerHTML = participants.map(p => `
+                    <div class="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
+                        <div class="mb-4">
+                            <h3 class="text-lg font-semibold text-gray-100">${p.name}</h3>
+                            <p class="text-gray-400 text-sm">
+                                <span class="text-gray-300">신청한 실험:</span>
+                                <span class="text-blue-400">${p.experiment_title}</span>
+                            </p>
+                            <p class="text-gray-500 text-sm">
+                                <span class="text-gray-400">학년 반 번호:</span>
+                                <span class="text-gray-300"> ${p.grade}학년 ${p.class}반 ${p.number}번</span>
+                            </p>
+                            <p class="text-gray-500 text-sm">
+                                <span class="text-gray-400">신청 일시:</span>
+                                <span class="text-gray-300"> ${new Date(p.applied_at).toLocaleDateString('ko-KR')}</span>
+                            </p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button 
+                                onclick="approveParticipant(${p.id})"
+                                class="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded transition text-sm"
+                            >
+                                승인
+                            </button>
+                            <button 
+                                onclick="rejectParticipant(${p.id})"
+                                class="flex-1 bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded transition text-sm"
+                            >
+                                거절
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading participants:', error);
+                document.getElementById('participantsList').innerHTML = `
+                    <div class="text-center py-12 text-red-400">
+                        참여자를 불러올 수 없습니다.
+                    </div>
+                `;
+            }
+        }
+        async function approveExperiment(expId) {
+            const teacherName = document.getElementById('teacherName').value || '관리자';
+            try {
+                const response = await fetch(`/api/admin/approve-experiment/${expId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ teacher_name: teacherName })
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    alert('실험계획서가 승인되었습니다.');
+                    loadPendingExperiments();
+                } else {
+                    alert(result.error || '승인에 실패했습니다.');
+                }
+            } catch (error) {
+                console.error('Error approving experiment:', error);
+                alert('오류가 발생했습니다: ' + error.message);
+            }
+        }
+        async function rejectExperiment(expId) {
+            if (!confirm('이 실험계획서를 거절하시겠습니까?')) return;
+            
+            try {
+                const response = await fetch(`/api/admin/reject-experiment/${expId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    alert('실험계획서가 거절되었습니다.');
+                    loadPendingExperiments();
+                } else {
+                    alert(result.error || '거절에 실패했습니다.');
+                }
+            } catch (error) {
+                console.error('Error rejecting experiment:', error);
+                alert('오류가 발생했습니다: ' + error.message);
+            }
+        }
+        async function approveParticipant(participantId) {
+            const teacherName = document.getElementById('teacherName').value || '관리자';
+            try {
+                const response = await fetch(`/api/admin/approve-participant/${participantId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ teacher_name: teacherName })
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    alert('참여자가 승인되었습니다.');
+                    loadPendingParticipants();
+                } else {
+                    alert(result.error || '승인에 실패했습니다.');
+                }
+            } catch (error) {
+                console.error('Error approving participant:', error);
+                alert('오류가 발생했습니다: ' + error.message);
+            }
+        }
+        async function rejectParticipant(participantId) {
+            if (!confirm('이 참여자를 거절하시겠습니까?')) return;
+            
+            try {
+                const response = await fetch(`/api/admin/reject-participant/${participantId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    alert('참여자가 거절되었습니다.');
+                    loadPendingParticipants();
+                } else {
+                    alert(result.error || '거절에 실패했습니다.');
+                }
+            } catch (error) {
+                console.error('Error rejecting participant:', error);
+                alert('오류가 발생했습니다: ' + error.message);
+            }
+        }
+        loadUserInfo();
+        loadPendingExperiments();
+        document.getElementById('createStudentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const username = document.getElementById('studentUsername').value;
+            const password = document.getElementById('studentPassword').value;
+            const name = document.getElementById('studentName').value;
+            const grade = document.getElementById('studentGrade').value;
+            const classList = document.getElementById('studentClass').value;
+            const number = document.getElementById('studentNumber').value;
+            try {
+                const response = await fetch('/api/admin/create-student', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: username,
+                        password: password,
+                        name: name,
+                        grade: grade,
+                        class: classList,
+                        number: number
+                    })
+                });
+                const result = await response.json();
+                const msgDiv = document.getElementById('createStudentMessage');
+                const msgText = document.getElementById('createStudentMessageText');
+
+                if (result.success) {
+                    msgDiv.className = 'p-4 rounded border bg-green-900 border-green-700 mt-4 hidden';
+                    msgText.textContent = result.message;
+                    msgDiv.classList.remove('hidden');
+                    document.getElementById('createStudentForm').reset();
+                    setTimeout(() => {
+                        loadStudents();
+                    }, 1000);
+                } else {
+                    msgDiv.className = 'p-4 rounded border bg-red-900 border-red-700 mt-4 hidden';
+                    msgText.textContent = result.error || '오류가 발생했습니다.';
+                    msgDiv.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Error creating student:', error);
+            }
+        });
+        async function loadStudents() {
+            try {
+                const response = await fetch('/api/admin/students');
+                const students = await response.json();
+
+                if (students.length === 0) {
+                    document.getElementById('studentsList').innerHTML = `
+                        <div class="text-center py-12 text-gray-400">
+                            등록된 학생이 없습니다.
+                        </div>
+                    `;
+                    return;
+                }
+                document.getElementById('studentsList').innerHTML = students.map(s => `
+                    <div class="bg-neutral-700 border border-neutral-600 rounded-lg p-4 flex justify-between items-center">
+                        <div>
+                            <h4 class="text-gray-100 font-semibold">${s.name}</h4>
+                            <p class="text-gray-400 text-sm">아이디: ${s.username} | ${s.grade}학년 ${s.class}반 ${s.number}번</p>
+                        </div>
+                        <button 
+                            onclick="deleteStudent(${s.id})"
+                            class="bg-red-600 hover:bg-red-700 text-white font-medium py-1 px-3 rounded transition text-sm"
+                        >
+                            삭제
+                        </button>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading students:', error);
+                document.getElementById('studentsList').innerHTML = `
+                    <div class="text-center py-12 text-red-400">
+                        학생 목록을 불러올 수 없습니다.
+                    </div>
+                `;
+            }
+        }
+        async function deleteStudent(studentId) {
+            if (!confirm('이 계정을 삭제하시겠습니까?')) return;
+            try {
+                const response = await fetch(`/api/admin/delete-student/${studentId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const result = await response.json();
+                if (result.success) {
+                    alert('계정이 삭제되었습니다.');
+                    loadStudents();
+                } else {
+                    alert(result.error || '삭제에 실패했습니다.');
+                }
+            } catch (error) {
+                console.error('Error deleting student:', error);
+                alert('오류가 발생했습니다: ' + error.message);
+            }
+        }
+        async function loadAllExperiments() {
+            try {
+                const response = await fetch('/api/admin/all-experiments');
+                const experiments = await response.json();
+
+                if (experiments.length === 0) {
+                    document.getElementById('manageAllList').innerHTML = `
+                        <div class="text-center py-12 text-gray-400">
+                            실험이 없습니다.
+                        </div>
+                    `;
+                    return;
+                }
+                document.getElementById('manageAllList').innerHTML = experiments.map(exp => `
+                    <div class="bg-neutral-800 border border-neutral-700 rounded-lg p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex-1">
+                                <h3 class="text-lg font-semibold text-gray-100 mb-2">${exp.title}</h3>
+                                <p class="text-gray-400 text-sm mb-3">${exp.description.substring(0, 150)}...</p>
+                                <div class="grid grid-cols-2 gap-4 text-sm text-gray-400 mb-3">
+                                    <div>
+                                        <span class="text-gray-300">작성자:</span>
+                                        <span class="text-gray-200"> ${exp.created_by}</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-gray-300">마감일:</span>
+                                        <span class="text-gray-200"> ${exp.deadline ? new Date(exp.deadline).toLocaleDateString('ko-KR') : '미정'}</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-gray-300">모집 인원:</span>
+                                        <span class="text-blue-400 font-bold"> ${exp.max_participants}명</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-gray-300">현재 참여:</span>
+                                        <span class="text-blue-400 font-bold"> ${exp.participants_count}명</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-gray-300">승인 상태:</span>
+                                        <span class="${exp.approved ? 'text-green-400' : 'text-yellow-400'} font-semibold">
+                                            ${exp.approved ? '✓ 승인됨' : '⋯ 대기중'}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <span class="text-gray-300">총 회차:</span>
+                                        <span class="text-gray-200"> ${exp.total_sessions || '미정'}회</span>
+                                    </div>
+                                </div>
+                                ${exp.message_for_participants ? `<div class="p-3 bg-neutral-700 rounded text-sm text-gray-300 border-blue-500 mb-3">
+                                    <strong>참여자 메시지:</strong> ${exp.message_for_participants}
+                                </div>` : ''}
+                            </div>
+                            <div class="flex gap-2 flex-col ml-4 whitespace-nowrap">
+                                <button 
+                                    onclick="editExperiment(${exp.id})"
+                                    class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition"
+                                >
+                                    편집
+                                </button>
+                                <button 
+                                    onclick="deleteExperiment(${exp.id})"
+                                    class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded transition"
+                                >
+                                    삭제
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading all experiments:', error);
+                document.getElementById('manageAllList').innerHTML = `
+                    <div class="text-center py-12 text-red-400">
+                        실험 목록을 불러올 수 없습니다.
+                    </div>
+                `;
+            }
+        }
+        async function editExperiment(experimentId) {
+            if (!confirm('이 실험을 편집하시겠습니까?')) return;
+            
+            try {
+                const response = await fetch(`/api/admin/all-experiments`);
+                const experiments = await response.json();
+                const exp = experiments.find(e => e.id === experimentId);
+                
+                if (!exp) {
+                    alert('실험을 찾을 수 없습니다.');
+                    return;
+                }
+
+                const newTitle = prompt('새 제목:', exp.title) || exp.title;
+                const newDesc = prompt('새 설명:', exp.description) || exp.description;
+                const newMax = prompt('모집 인원:', exp.max_participants) || exp.max_participants;
+                const newSessions = prompt('총 회차:', exp.total_sessions || 1) || exp.total_sessions;
+                const newMessage = prompt('참여자 메시지:', exp.message_for_participants || '') || (exp.message_for_participants || '');
+                
+                const updateData = {
+                    title: newTitle,
+                    description: newDesc,
+                    max_participants: parseInt(newMax),
+                    total_sessions: parseInt(newSessions),
+                    message_for_participants: newMessage,
+                    deadline: exp.deadline
+                };
+                
+                const saveResponse = await fetch(`/api/admin/edit-experiment/${experimentId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updateData)
+                });
+                
+                const result = await saveResponse.json();
+                if (result.success) {
+                    alert('실험이 수정되었습니다.');
+                    loadAllExperiments();
+                } else {
+                    alert(result.error || '수정에 실패했습니다.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('오류: ' + error.message);
+            }
+        }
+        async function deleteExperiment(experimentId) {
+            if (!confirm('이 실험을 삭제하시겠습니까?')) return;
+            try {
+                const response = await fetch(`/api/admin/delete-experiment/${experimentId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    alert('실험이 삭제되었습니다.');
+                    loadAllExperiments();
+                } else {
+                    alert(result.error || '삭제에 실패했습니다.');
+                }
+            } catch (error) {
+                console.error('Error deleting experiment:', error);
+                alert('오류가 발생했습니다: ' + error.message);
+            }
+        }
+    </script>
+<footer class="bg-white border-t border-gray-200 text-gray-800 font-sans" style="z-index: 999;">
+    <div class="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div>
+        <div class="flex items-center space-x-4 mb-6">
+            <a>
+            <img src="https://raw.githubusercontent.com/Anion15/anion15.github.io/refs/heads/main/icon-.png" alt="logo" class="w-20 sm:w-14 md:w-18 lg:w-22 xl:w-26">
+            </a>
+        </div>
+        <ul class="space-y-3 text-base text-gray-600">
+            <li><span class="font-medium"><b>대표이메일</b></span> admin@apice.kr</li>
+            <li><span class="font-medium"><b>운영 형태</b></span> 실험 관리 시스템 | 1인 개발</li>
+        </ul>
+        </div>
+        <div></div>
+        <div class="flex flex-col items-start md:items-end space-y-6">
+        <div class="flex space-x-3">
+            <a href="https://www.instagram.com/yxbh.rh0" class="w-9 h-9 border rounded-full flex items-center justify-center hover:bg-gray-100">
+            <img src="https://simpleicons.org/icons/instagram.svg" class="w-4 h-4">
+            </a>
+            <a href="https://github.com/anion15" class="w-9 h-9 border rounded-full flex items-center justify-center hover:bg-gray-100">
+            <img src="https://simpleicons.org/icons/github.svg" class="w-4 h-4">
+            </a>
+        </div>
+        </div>
+    </div>
+<div class="border-t border-gray-200">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex flex-wrap gap-6 text-base text-gray-600">
+        
+        <a href="https://incheonsangjeong.icehs.kr/main.do" target="_blank" class="inline-flex items-center gap-1 font-semibold text-blue-600 hover:text-blue-800">
+            인천상정고등학교 홈페이지
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+                <path d="M5 12h14"></path>
+                <path d="M13 6l6 6-6 6"></path>
+            </svg>
+        </a>
+
+        <a href="https://commu.world" target="_blank" class="inline-flex items-center gap-1 font-semibold text-blue-600 hover:text-blue-800">
+            상정인사이드 바로가기
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+                <path d="M5 12h14"></path>
+                <path d="M13 6l6 6-6 6"></path>
+            </svg>
+        </a>
+
+    </div>
+    <div class="max-w-7xl mx-auto px-6 pb-6 text-sm text-gray-500">
+        상정인사이드는 apice.kr를 만든 개발자가 제작한 개인 프로젝트입니다.<br>
+        상정인사이드의 '상정'은 인천상정고등학교와 일체의 연관이 없습니다.
+    </div>
+</div>
+    <div class="max-w-7xl mx-auto px-6 py-3 text-sm text-gray-500 leading-relaxed">
+        본 서비스는 고등학생 개발자 1인이 개발한 프로젝트이며, 사용된 모든 이미지 및 관련 파일과 소스 코드의 출처는
+        전적으로 개발자에게 있음을 알립니다.
+    </div>
+    <div class="max-w-7xl mx-auto px-6 py-4 text-base text-gray-500 flex flex-col md:flex-row justify-between gap-2">
+        <span>© 2026 | 20116 윤주원. All rights reserved.</span>
+        <span>Developed by 윤주원</span>
+    </div>
+    <div id="site-status-bar" class="bg-gray-900 text-gray-200 text-base px-6 py-3 flex items-center gap-2">
+    <span id="site-badge" class="font-semibold">
+        Apice.kr
+    </span>
+
+    <span id="site-status-text" class="opacity-80">
+        v1.0.0
+    </span>
+    </div>
+    </footer>
+    <style>
+    a svg {
+    transition: transform 0.2s ease;
+    }
+    a:hover svg {
+    transform: translateX(3px);
+    }
+
+    .dark-theme footer img{
+    filter: brightness(0) invert(1);
+    }
+    </style>
+</body>
+<script>
+    window.addEventListener("load", function () {
+        console.log(`%c
+        인천상정고등학교 아피체 동아리 \n%c
+
+                            ##                                ###                %c
+                                                              ##    ##           %c
+        ####    ######    ###      ####     ####              ##  ##  ######     %c
+            ##    ##  ##    ##     ##  ##   ##  ##             ## ##    ##  ##   %c
+        #####    ##  ##    ##     ##       ######             ####     ##        %c
+        ##  ##    #####     ##     ##  ##   ##         ##      ## ##    ##       %c
+        #####    ##       ####     ####     #####     ##      ##  ##  ####      
+                ####                                                            
+
+                                            Made by Anion15 (instagram: yxbh.rh0)                              
+
+                                                                `,
+            `color: white; font-size: 10px; padding:2px 0; font-family: monospace`,
+            `color: #00a3a4;`,
+            `color: #007498;`,
+            `color: #1e4572;`,
+            `color: #005c8b;`,
+            `color: #008ba0;`,
+            `color: #00a3a4;`,
+            `color: #007498;`,
+            )
+        console.log(
+        "%c위험!\n\n" +
+        "%c이 기능은 일반 사용자가 아닌 개발자를 위해 " +
+        "브라우저에서 제공되는 기능입니다.\n\n" +
+        "여기에 임의의 코드를 입력하거나 " +
+        "타인의 지시에 따라 실행할 경우 " +
+        "서비스 이용에 심각한 피해가 " +
+        "발생할 수 있습니다.\n",
+        "color:#ff3b3b;font-size:42px;font-weight:900;",
+        "color:#ffffff;font-size:14px;line-height:1.6;"
+        );
+    });
+</script>
+</html>
