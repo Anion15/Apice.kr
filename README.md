@@ -10,7 +10,7 @@
 > 당시 급하게 필요한 상황이라 Flask로 빠르게 구현했습니다.<br>
 > Express.js에 비해 유지보수 측면에서 아쉬운 점이 있을 수 있다는 점을 감안하고 개발했습니다.
 >
-> 이 코드는 [LICENSE](https://github.com/Anion15/Apice.kr/blob/main/LICENSE)로 보호됩니다.<br>
+> 이 리포지토리는 [LICENSE](https://github.com/Anion15/Apice.kr/blob/main/LICENSE)로 보호됩니다.<br>
 > 사용, 복사, 수정, 배포, 서브라이선스 관련 문의는 `juwony27@gmail.com`으로 부탁드립니다.
 
 ## Project Structure
