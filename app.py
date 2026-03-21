@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, jsonify, redirect, url_for, s
 from flask_limiter.errors import RateLimitExceeded
 from flask_wtf.csrf import CSRFProtect
 from flask_limiter import Limiter
+from flask import send_from_directory
 from datetime import datetime, timedelta
 from flask_limiter.util import get_remote_address
 import sqlite3
@@ -1072,6 +1073,12 @@ def invalid_subdomain():
             </body>
             </html>
 """), 404
+
+
+@app.route("/server.js")
+def serve_server_js():
+    return send_from_directory(os.path.join(app.root_path, "static"), "server.js")
+
 
 if __name__ == '__main__':
     init_db()
