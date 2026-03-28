@@ -1079,6 +1079,28 @@ def invalid_subdomain():
 def serve_server_js():
     return send_from_directory(os.path.join(app.root_path, "static"), "server.js")
 
+@app.route("/manifest.json")
+def manifest():
+    return jsonify({
+  "id": "/",
+  "name": "인천상정고등학교 Apice동아리",
+  "short_name": "Apice동아리",
+  "description": "인천상정고등학교 Apice동아리",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#111111",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/Anion15/anion15.github.io/refs/heads/main/icon-.png",
+      "sizes": "200x200",
+      "type": "image/png"
+    }
+  ]
+}
+)
+
 
 if __name__ == '__main__':
     init_db()
