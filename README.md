@@ -76,8 +76,17 @@ Apice.kr/
 
 
 ----
-<br><br><br>
+<br><br>
 ### 여담
 
 현재 이 프로젝트는 집에서 직접 운영 중인 리눅스 서버에서 돌아가고 있습니다.  
 그래서 서버 자원과 유지 부담을 고려해, [실험계획서 작성](https://github.com/Anion15/Apice.kr/blob/main/templates/register_experiment.html) 페이지에는 파일 업로드 기능을 별도로 넣지 않았습니다.
+
+<br>
+
+<p align="center">
+  <sub>
+    Apice.kr · 실험 관리 시스템
+  </sub>
+</p>
+
